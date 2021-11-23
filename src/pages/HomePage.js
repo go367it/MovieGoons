@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import { SearchIcon } from "@heroicons/react/solid";
 import axios from "axios";
 import cogoToast from "cogo-toast";
-import MovieList, { Favourite } from "../components/movieList";
-import { Routes, Route, Link } from "react-router-dom";
-import Favourites from "./Favourites";
+import MovieList from "../components/movieList";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
   const [searchValue, setSearchValue] = useState("");
   const [movies, setMovies] = useState([]);
+  const [pageNumber, setPageNumber] = useState(1)
 
   useEffect(() => {
+    console.log(window.location.pathname);
     if (!localStorage.getItem("favourites")) {
       const favourites = [];
       localStorage.setItem("favourites", JSON.stringify(favourites));
@@ -21,21 +22,20 @@ const HomePage = () => {
   const onSearch = () => {
     if (searchValue !== "") {
       const config = {
-        url: `http://www.omdbapi.com/?s=${searchValue}&apikey=b41184fd`,
+        url: `http://www.omdbapi.com/?s=${searchValue}&apikey=b41184fd&page=${pageNumber}`,
         method: "get",
       };
 
       axios(config)
         .then((response) => {
-          if(response.data.Search){
-          console.log(response.data.Search);
-          setMovies(response.data.Search);
+          if (response.data.Search) {
+            console.log(response.data.Search);
+            setMovies(response.data.Search);
           }
-          
         })
         .catch((error) => {
           console.log(error);
-          setMovies([])
+          setMovies([]);
           return cogoToast.error("Something went wrong!", {
             position: "bottom-left",
           });
@@ -47,9 +47,20 @@ const HomePage = () => {
     }
   };
 
+  const onPageChange = (type) =>{
+    if(type === 'dec' && pageNumber !== 1){
+      setPageNumber(pageNumber - 1)
+      onSearch()
+    }
+    else if(type === 'inc' && movies.length !== 0){
+      setPageNumber(pageNumber + 1)
+      onSearch()
+    }
+  }
+
   return (
     <div>
-      <div className="navbar -mb-16">
+      <div className="navbar">
         <div className="flex px-4 py-3 justify-between items-center">
           <div className="heading text-white text-semibold text-3xl">
             <div className="flex gap-4 items-center">
@@ -95,11 +106,60 @@ const HomePage = () => {
         </div>
       </div>
 
+      {movies.length > 0 ? (
+        <div className="flex justify-end px-4 py-4 -mb-20">
+          <div className="text-white">
+            <div className="flex">
+              <button 
+              onClick={()=>onPageChange('dec')}
+              className="p-4 rounded-l-md bg-gray-700">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+
+              <span className="p-4 bg-gray-700">
+                {pageNumber}
+              </span>
+
+              <button 
+              onClick={()=>onPageChange('inc')}
+              className="p-4 rounded-r-md bg-gray-700">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex justify-center">
+          <h1 className="text-2xl text-white text-center">
+            Please search movies
+          </h1>
+        </div>
+      )}
+
       <div>
-        <Routes>
-          <Route path="/" element={<MovieList movies={movies} />} />
-          <Route path="/favourites" element={<Favourites />} />
-        </Routes>
+        <MovieList movies={movies} />
       </div>
     </div>
   );

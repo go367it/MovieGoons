@@ -27,11 +27,15 @@ const HomePage = () => {
 
       axios(config)
         .then((response) => {
+          if(response.data.Search){
           console.log(response.data.Search);
           setMovies(response.data.Search);
+          }
+          
         })
         .catch((error) => {
           console.log(error);
+          setMovies([])
           return cogoToast.error("Something went wrong!", {
             position: "bottom-left",
           });

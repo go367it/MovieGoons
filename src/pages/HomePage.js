@@ -22,7 +22,7 @@ const HomePage = () => {
   const onSearch = () => {
     if (searchValue !== "") {
       const config = {
-        url: `http://www.omdbapi.com/?s=${searchValue}&apikey=b41184fd&page=${pageNumber}`,
+        url: `https://www.omdbapi.com/?s=${searchValue}&apikey=b41184fd&page=${pageNumber}`,
         method: "get",
       };
 

@@ -6,20 +6,12 @@ import MovieList from "../components/movieList";
 import { Link } from "react-router-dom";
 
 const HomePage = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState("fate");
   const [movies, setMovies] = useState([]);
   const [pageNumber, setPageNumber] = useState(1)
 
-  useEffect(() => {
-    console.log(window.location.pathname);
-    if (!localStorage.getItem("favourites")) {
-      const favourites = [];
-      localStorage.setItem("favourites", JSON.stringify(favourites));
-    }
-  }, []);
-
-  // function when search button is clicked
-  const onSearch = () => {
+   // function when search button is clicked
+   const onSearch = () => {
     if (searchValue !== "") {
       const config = {
         url: `https://www.omdbapi.com/?s=${searchValue}&apikey=b41184fd&page=${pageNumber}`,
@@ -31,6 +23,7 @@ const HomePage = () => {
           if (response.data.Search) {
             console.log(response.data.Search);
             setMovies(response.data.Search);
+            setSearchValue('')
           }
         })
         .catch((error) => {
@@ -46,6 +39,17 @@ const HomePage = () => {
       });
     }
   };
+
+  useEffect(() => {
+    console.log(window.location.pathname);
+    if (!localStorage.getItem("favourites")) {
+      const favourites = [];
+      localStorage.setItem("favourites", JSON.stringify(favourites));
+    }
+    onSearch()
+  }, []);
+
+ 
 
   const onPageChange = (type) =>{
     if(type === 'dec' && pageNumber !== 1){

@@ -3,6 +3,7 @@ import Fade from "react-reveal/Fade";
 import { Dialog, Transition } from "@headlessui/react";
 import { Rating } from "react-simple-star-rating";
 import cogoToast from "cogo-toast";
+import { Link } from "react-router-dom";
 
 export function Favourite(props) {
   let [isOpen, setIsOpen] = useState(false);
@@ -153,11 +154,13 @@ const movieList = (props) => {
         return (
           <Fade>
             <div key={j.imdbID} className="mt-20 mb-16 rounded-lg">
+              <Link to={`/movie/${j.imdbID}`}>
               <img
                 className="w-full h-full object-center object-cover lg:w-full lg:h-full"
                 src={j.Poster}
                 alt={j.Type}
               />
+              </Link>
               <div
                 className="w-full rounded-b-lg"
                 style={{ backgroundColor: "#1A1A1A" }}

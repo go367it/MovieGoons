@@ -23,7 +23,7 @@ const HomePage = () => {
           if (response.data.Search) {
             console.log(response.data.Search);
             setMovies(response.data.Search);
-            setSearchValue('')
+            // setSearchValue('')
           }
         })
         .catch((error) => {
